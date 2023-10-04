@@ -63,7 +63,7 @@ class TodoList : Fragment() {
 
             parentFragmentManager.beginTransaction()
                 .addToBackStack("add form")
-                .replace(R.id.frmFragmentRoot, AddTodoList.newInstance("",""))
+                .replace(R.id.frmFragmentRoot, AddTodoList.newInstance("add",""))
                 .commit()
 
         })
@@ -73,6 +73,10 @@ class TodoList : Fragment() {
 
     }
 
+    override fun onResume() {
+        super.onResume()
+        getAllTodolist()
+    }
     companion object {
         /**
          * Use this factory method to create a new instance of

@@ -36,59 +36,7 @@ class MainActivity : AppCompatActivity() {
 
 
 
-    fun addDataTodoList(data : TodolistItem){
-        val client = APIConfig.getApiService()
-            .addDataTodoList(toRequestBody(data.tugas.toString()),
-                toRequestBody(data.detail.toString()),
-                toRequestBody(data.status.toString()))
 
-         client.enqueue(object : Callback<ResponseSuccess> {
-            override fun onResponse(
-                call: Call<ResponseSuccess>,
-                response: Response<ResponseSuccess>
-            ) {
-
-                val responseBody = response.body()
-                if (response.isSuccessful && responseBody != null) {
-                    Log.e("INFO", "onSuccess: ${responseBody.message}")
-                }
-            }
-
-            override fun onFailure(call: Call<ResponseSuccess>, t: Throwable) {
-
-                Log.e("INFO", "onFailure: ${t.message.toString()}")
-            }
-        })
-
-
-    }
-
-    fun updateDataTodoList(data : TodolistItem){
-        val client = APIConfig.getApiService()
-            .updateDataTodoList(toRequestBody(data.id.toString()),toRequestBody(data.tugas.toString()),
-                toRequestBody(data.detail.toString()),
-                toRequestBody(data.status.toString()))
-
-        client.enqueue(object : Callback<ResponseSuccess> {
-            override fun onResponse(
-                call: Call<ResponseSuccess>,
-                response: Response<ResponseSuccess>
-            ) {
-
-                val responseBody = response.body()
-                if (response.isSuccessful && responseBody != null) {
-                    Log.e("INFO", "onSuccess: ${responseBody.message}")
-                }
-            }
-
-            override fun onFailure(call: Call<ResponseSuccess>, t: Throwable) {
-
-                Log.e("INFO", "onFailure: ${t.message.toString()}")
-            }
-        })
-
-
-    }
 
     fun deleteDataTodoList(data : TodolistItem){
         val client = APIConfig.getApiService()
