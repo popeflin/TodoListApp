@@ -37,7 +37,7 @@ object APIConfig {
             .build()
 
         val retrofit = Retrofit.Builder()
-            .baseUrl("https://76f6-140-213-140-136.ngrok-free.app/cicool/api")
+            .baseUrl("https://76f6-140-213-140-136.ngrok-free.app/cicool/api/")
             .addConverterFactory(GsonConverterFactory.create())
             .client(client)
             .build()
