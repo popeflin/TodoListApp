@@ -19,5 +19,16 @@ interface APIServices {
     fun addDataTodoList(@Part("tugas") tugas:RequestBody ,@Part("detail")
                          detail:RequestBody,@Part("status") status:RequestBody) : Call<ResponseSuccess>
 
+    @Multipart
+    @POST("todolist/update")
+    fun updateDataTodoList(@Part("id") id:RequestBody, @Part("tugas") tugas:RequestBody ,@Part("detail")
+    detail:RequestBody,@Part("status") status:RequestBody) : Call<ResponseSuccess>
+
+    @Multipart
+    @POST("todolist/delete")
+    fun deleteDataTodoList(@Part("id") id:RequestBody) : Call<ResponseSuccess>
+
+
+
 
 }

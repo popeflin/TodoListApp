@@ -14,7 +14,7 @@ object APIConfig {
     class TokenInterceptor: Interceptor{
         override fun intercept(chain: Interceptor.Chain): Response {
            val request : Request = chain.request().newBuilder()
-               .header("X-Api-Key", "4787FEAB96AC18BD094622469741CC9A")
+               .header("X-Api-Key", "")
                .build()
             return chain.proceed(request)
         }

@@ -21,7 +21,9 @@ class MainActivity : AppCompatActivity() {
 
       //  getAllTodolist()
 
-        addDataTodoList(TodolistItem(" Kerja",null,"Berangkat Kerja","0"))
+      //  addDataTodoList(TodolistItem(" Kerja",null,"Berangkat Kerja","0"))
+      //  updateDataTodoList(TodolistItem("Kerja Paksa"," 4","Romusha","1"))
+        deleteDataTodoList(TodolistItem(null,"4",null,null))
     }
 
 
@@ -74,6 +76,60 @@ class MainActivity : AppCompatActivity() {
 
 
     }
+
+    fun updateDataTodoList(data : TodolistItem){
+        val client = APIConfig.getApiService()
+            .updateDataTodoList(toRequestBody(data.id.toString()),toRequestBody(data.tugas.toString()),
+                toRequestBody(data.detail.toString()),
+                toRequestBody(data.status.toString()))
+
+        client.enqueue(object : Callback<ResponseSuccess> {
+            override fun onResponse(
+                call: Call<ResponseSuccess>,
+                response: Response<ResponseSuccess>
+            ) {
+
+                val responseBody = response.body()
+                if (response.isSuccessful && responseBody != null) {
+                    Log.e("INFO", "onSuccess: ${responseBody.message}")
+                }
+            }
+
+            override fun onFailure(call: Call<ResponseSuccess>, t: Throwable) {
+
+                Log.e("INFO", "onFailure: ${t.message.toString()}")
+            }
+        })
+
+
+    }
+
+    fun deleteDataTodoList(data : TodolistItem){
+        val client = APIConfig.getApiService()
+            .deleteDataTodoList(toRequestBody(data.id.toString()))
+
+        client.enqueue(object : Callback<ResponseSuccess> {
+            override fun onResponse(
+                call: Call<ResponseSuccess>,
+                response: Response<ResponseSuccess>
+            ) {
+
+                val responseBody = response.body()
+                if (response.isSuccessful && responseBody != null) {
+                    Log.e("INFO", "onSuccess: ${responseBody.message}")
+                }
+            }
+
+            override fun onFailure(call: Call<ResponseSuccess>, t: Throwable) {
+
+                Log.e("INFO", "onFailure: ${t.message.toString()}")
+            }
+        })
+
+
+    }
+
+
 
     fun toRequestBody(value: String): RequestBody {
         return value.toRequestBody("text/plain".toMediaTypeOrNull())
