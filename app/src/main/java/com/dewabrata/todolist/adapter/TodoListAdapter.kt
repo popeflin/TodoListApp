@@ -4,13 +4,15 @@ import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.TextView
 import com.dewabrata.todolist.R
-import com.dewabrata.todolist.uifragment.TodoList
+import com.dewabrata.todolist.apiservice.model.TodolistItem
 import java.util.*
 
 class TodoListAdapter : RecyclerView.Adapter<TodoListAdapter.ViewHolder>() {
 
-    var data: MutableList<TodoList> = mutableListOf()
+    var data: MutableList<TodolistItem> = mutableListOf()
         set(value) {
             field = value
             notifyDataSetChanged()
@@ -24,8 +26,18 @@ class TodoListAdapter : RecyclerView.Adapter<TodoListAdapter.ViewHolder>() {
     override fun getItemCount() = data.size
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        fun bind(item: TodoList) = with(itemView) {
-            // TODO: Bind the data with View
+        fun bind(item: TodolistItem) = with(itemView) {
+
+            itemView.findViewById<TextView>(R.id.txtTugas).text =  item.tugas
+            itemView.findViewById<TextView>(R.id.txtDetail).text =  item.detail
+
+            if(item.status == "0") {
+                itemView.findViewById<ImageView>(R.id.imgStatus)
+                    .setImageResource(R.drawable.baseline_access_time_24)
+            }else{
+                itemView.findViewById<ImageView>(R.id.imgStatus)
+                    .setImageResource(R.drawable.baseline_check_24)
+            }
         }
     }
 }
