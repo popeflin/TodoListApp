@@ -12,6 +12,7 @@ import com.dewabrata.todolist.R
 import com.dewabrata.todolist.adapter.TodoListAdapter
 import com.dewabrata.todolist.apiservice.APIConfig
 import com.dewabrata.todolist.apiservice.model.ResponseGetAllData
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -34,6 +35,8 @@ class TodoList : Fragment() {
     lateinit var recyclerView: RecyclerView
     lateinit var todoListAdapter : TodoListAdapter
 
+    lateinit var fabAddData : FloatingActionButton
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
@@ -53,6 +56,17 @@ class TodoList : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         recyclerView = view.findViewById(R.id.lstTodo)
+
+        fabAddData = view.findViewById(R.id.fabAdd)
+
+        fabAddData.setOnClickListener(View.OnClickListener {
+
+            parentFragmentManager.beginTransaction()
+                .addToBackStack("add form")
+                .replace(R.id.frmFragmentRoot, AddTodoList.newInstance("",""))
+                .commit()
+
+        })
 
         getAllTodolist()
 
