@@ -7,6 +7,7 @@ import com.dewabrata.todolist.apiservice.APIConfig
 import com.dewabrata.todolist.apiservice.model.ResponseGetAllData
 import com.dewabrata.todolist.apiservice.model.ResponseSuccess
 import com.dewabrata.todolist.apiservice.model.TodolistItem
+import com.dewabrata.todolist.uifragment.TodoList
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
@@ -19,36 +20,21 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        if(savedInstanceState == null){
+            supportFragmentManager.beginTransaction()
+                .replace(R.id.frmFragmentRoot, TodoList.newInstance("",""))
+                .commit()
+        }
+
       //  getAllTodolist()
 
       //  addDataTodoList(TodolistItem(" Kerja",null,"Berangkat Kerja","0"))
       //  updateDataTodoList(TodolistItem("Kerja Paksa"," 4","Romusha","1"))
-        deleteDataTodoList(TodolistItem(null,"4",null,null))
+     //   deleteDataTodoList(TodolistItem(null,"4",null,null))
     }
 
 
-    fun getAllTodolist(){
 
-        val client = APIConfig.getApiService().getAllData()
-
-        client.enqueue(object : Callback<ResponseGetAllData> {
-            override fun onResponse(
-                call: Call<ResponseGetAllData>,
-                response: Response<ResponseGetAllData>
-            ) {
-
-                val responseBody = response.body()
-                if (response.isSuccessful && responseBody != null) {
-                    Log.e("INFO", "onSuccess: ${responseBody.data?.todolist}")
-                }
-            }
-
-            override fun onFailure(call: Call<ResponseGetAllData>, t: Throwable) {
-
-                Log.e("INFO", "onFailure: ${t.message.toString()}")
-            }
-        })
-    }
 
     fun addDataTodoList(data : TodolistItem){
         val client = APIConfig.getApiService()

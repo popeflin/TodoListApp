@@ -1,11 +1,20 @@
 package com.dewabrata.todolist.uifragment
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.dewabrata.todolist.R
+import com.dewabrata.todolist.adapter.TodoListAdapter
+import com.dewabrata.todolist.apiservice.APIConfig
+import com.dewabrata.todolist.apiservice.model.ResponseGetAllData
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -22,6 +31,9 @@ class TodoList : Fragment() {
     private var param1: String? = null
     private var param2: String? = null
 
+    lateinit var recyclerView: RecyclerView
+    lateinit var todoListAdapter : TodoListAdapter
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
@@ -36,6 +48,15 @@ class TodoList : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_todo_list, container, false)
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        recyclerView = view.findViewById(R.id.lstTodo)
+
+        getAllTodolist()
+
+
     }
 
     companion object {
@@ -56,5 +77,35 @@ class TodoList : Fragment() {
                     putString(ARG_PARAM2, param2)
                 }
             }
+    }
+
+    fun getAllTodolist(){
+
+        val client = APIConfig.getApiService().getAllData()
+
+        client.enqueue(object : Callback<ResponseGetAllData> {
+            override fun onResponse(
+                call: Call<ResponseGetAllData>,
+                response: Response<ResponseGetAllData>
+            ) {
+
+                val responseBody = response.body()
+                if (response.isSuccessful && responseBody != null) {
+                 //   Log.e("INFO", "onSuccess: ${responseBody.data?.todolist}")
+                    todoListAdapter = TodoListAdapter(responseBody.data?.todolist!!)
+                    recyclerView.layoutManager = LinearLayoutManager(context)
+
+                    recyclerView.adapter = todoListAdapter
+
+
+
+                }
+            }
+
+            override fun onFailure(call: Call<ResponseGetAllData>, t: Throwable) {
+
+                Log.e("INFO", "onFailure: ${t.message.toString()}")
+            }
+        })
     }
 }

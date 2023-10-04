@@ -8,36 +8,44 @@ import android.widget.ImageView
 import android.widget.TextView
 import com.dewabrata.todolist.R
 import com.dewabrata.todolist.apiservice.model.TodolistItem
-import java.util.*
 
-class TodoListAdapter : RecyclerView.Adapter<TodoListAdapter.ViewHolder>() {
+class TodoListAdapter (var data : List<TodolistItem?>) : RecyclerView.Adapter<TodoListAdapter.ViewHolder>() {
 
-    var data: MutableList<TodolistItem> = mutableListOf()
-        set(value) {
-            field = value
-            notifyDataSetChanged()
+   // lateinit var data : List<TodolistItem?>
+    fun setTodo(todo: List<TodolistItem?>?){
+        if (todo != null) {
+            data = todo
         }
+        notifyDataSetChanged()
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder =
         ViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.listtodo, parent, false))
 
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) = holder.bind(data[position])
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        holder.txtTugas.text = data.get(position)?.tugas
+        holder.txtDetail.text = data.get(position)?.detail
 
-    override fun getItemCount() = data.size
+        if(data.get(position)?.status == "0"){
+            holder.imgStatus.setImageResource(R.drawable.baseline_access_time_24)
+            }else {
+                holder.imgStatus.setImageResource(R.drawable.baseline_check_24)
+
+        }
+
+
+    }
+
+    override fun getItemCount():Int = data.size
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        fun bind(item: TodolistItem) = with(itemView) {
 
-            itemView.findViewById<TextView>(R.id.txtTugas).text =  item.tugas
-            itemView.findViewById<TextView>(R.id.txtDetail).text =  item.detail
+        val txtTugas = itemView.findViewById<TextView>(R.id.txtTugas)
+        val txtDetail = itemView.findViewById<TextView>(R.id.txtDetail)
+        val imgStatus = itemView.findViewById<ImageView>(R.id.imgStatus)
 
-            if(item.status == "0") {
-                itemView.findViewById<ImageView>(R.id.imgStatus)
-                    .setImageResource(R.drawable.baseline_access_time_24)
-            }else{
-                itemView.findViewById<ImageView>(R.id.imgStatus)
-                    .setImageResource(R.drawable.baseline_check_24)
-            }
-        }
+
+
+
     }
 }
