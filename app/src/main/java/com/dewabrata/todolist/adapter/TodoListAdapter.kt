@@ -3,13 +3,14 @@ package com.dewabrata.todolist.adapter
 import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.OnClickListener
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import com.dewabrata.todolist.R
 import com.dewabrata.todolist.apiservice.model.TodolistItem
 
-class TodoListAdapter (var data : List<TodolistItem?>) : RecyclerView.Adapter<TodoListAdapter.ViewHolder>() {
+class TodoListAdapter (var data : List<TodolistItem?> , private val clickListener: (TodolistItem) -> Unit ) : RecyclerView.Adapter<TodoListAdapter.ViewHolder>() {
 
    // lateinit var data : List<TodolistItem?>
     fun setTodo(todo: List<TodolistItem?>?){
@@ -32,6 +33,10 @@ class TodoListAdapter (var data : List<TodolistItem?>) : RecyclerView.Adapter<To
                 holder.imgStatus.setImageResource(R.drawable.baseline_check_24)
 
         }
+        holder.itemView.setOnClickListener {
+            clickListener(data.get(position)!!)
+        }
+
 
 
     }
@@ -40,9 +45,12 @@ class TodoListAdapter (var data : List<TodolistItem?>) : RecyclerView.Adapter<To
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
+
         val txtTugas = itemView.findViewById<TextView>(R.id.txtTugas)
         val txtDetail = itemView.findViewById<TextView>(R.id.txtDetail)
         val imgStatus = itemView.findViewById<ImageView>(R.id.imgStatus)
+
+
 
 
 

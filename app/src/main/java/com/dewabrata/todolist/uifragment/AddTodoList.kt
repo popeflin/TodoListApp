@@ -70,6 +70,19 @@ class AddTodoList : Fragment() {
 
             })
 
+        }else{
+            txtTugas.setText( param2?.tugas)
+            txtDetail.setText(param2?.detail)
+            if(param2?.status == "0"){
+                switch.setChecked(false)
+            }else{
+                switch.setChecked(true)
+            }
+
+            btnSend.setOnClickListener {
+
+                updateDataTodoList(TodolistItem(txtTugas.text.toString(),param2?.id,txtDetail.text.toString(),if(switch.isChecked) "1" else "0"))
+            }
         }
 
 
@@ -87,11 +100,11 @@ class AddTodoList : Fragment() {
          */
         // TODO: Rename and change types and number of parameters
         @JvmStatic
-        fun newInstance(param1: String, param2: String) =
+        fun newInstance(param1: String, param2: TodolistItem) =
             AddTodoList().apply {
                 arguments = Bundle().apply {
                     putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
+                    putParcelable(ARG_PARAM2, param2)
                 }
             }
     }
@@ -140,6 +153,7 @@ class AddTodoList : Fragment() {
                 val responseBody = response.body()
                 if (response.isSuccessful && responseBody != null) {
                     Log.e("INFO", "onSuccess: ${responseBody.message}")
+                    parentFragmentManager.popBackStackImmediate()
                 }
             }
 

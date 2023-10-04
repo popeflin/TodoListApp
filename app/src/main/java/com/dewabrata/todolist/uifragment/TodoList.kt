@@ -12,6 +12,7 @@ import com.dewabrata.todolist.R
 import com.dewabrata.todolist.adapter.TodoListAdapter
 import com.dewabrata.todolist.apiservice.APIConfig
 import com.dewabrata.todolist.apiservice.model.ResponseGetAllData
+import com.dewabrata.todolist.apiservice.model.TodolistItem
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import retrofit2.Call
 import retrofit2.Callback
@@ -63,10 +64,12 @@ class TodoList : Fragment() {
 
             parentFragmentManager.beginTransaction()
                 .addToBackStack("add form")
-                .replace(R.id.frmFragmentRoot, AddTodoList.newInstance("add",""))
+                .replace(R.id.frmFragmentRoot, AddTodoList.newInstance("add", TodolistItem()))
                 .commit()
 
         })
+
+
 
         getAllTodolist()
 
@@ -110,7 +113,14 @@ class TodoList : Fragment() {
                 val responseBody = response.body()
                 if (response.isSuccessful && responseBody != null) {
                  //   Log.e("INFO", "onSuccess: ${responseBody.data?.todolist}")
-                    todoListAdapter = TodoListAdapter(responseBody.data?.todolist!!)
+                    todoListAdapter = TodoListAdapter(responseBody.data?.todolist!!) { todolistItem ->
+
+                        parentFragmentManager.beginTransaction()
+                            .addToBackStack("add form")
+                            .replace(R.id.frmFragmentRoot, AddTodoList.newInstance("update",todolistItem))
+                            .commit()
+
+                     }
                     recyclerView.layoutManager = LinearLayoutManager(context)
 
                     recyclerView.adapter = todoListAdapter
