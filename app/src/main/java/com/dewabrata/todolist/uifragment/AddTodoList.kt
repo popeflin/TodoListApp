@@ -16,16 +16,19 @@ import android.widget.EditText
 import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.Switch
+import androidx.core.graphics.drawable.toBitmap
 import com.dewabrata.todolist.R
 import com.dewabrata.todolist.apiservice.APIConfig
 import com.dewabrata.todolist.apiservice.model.ResponseSuccess
 import com.dewabrata.todolist.apiservice.model.TodolistItem
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.io.ByteArrayOutputStream
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -50,6 +53,7 @@ class AddTodoList : Fragment() {
     lateinit var txtLocation : EditText
 
     lateinit var progressBar: ProgressBar
+    lateinit var bitmap: Bitmap
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -87,7 +91,12 @@ class AddTodoList : Fragment() {
         if(param1 == "add"){
 
             btnSend.setOnClickListener(View.OnClickListener {
-                addDataTodoList(TodolistItem(txtTugas.text.toString(),null,txtDetail.text.toString(),if(switch.isChecked) "1" else "0"))
+                addDataTodoList(TodolistItem(txtTugas.text.toString(),
+                    "image",
+                    txtLocation.text.toString(),
+                    null,
+                    txtDetail.text.toString(),
+                    if(switch.isChecked) "1" else "0"))
 
             })
 
@@ -131,10 +140,16 @@ class AddTodoList : Fragment() {
     }
 
     fun addDataTodoList(data : TodolistItem){
+
+
         val client = APIConfig.getApiService()
             .addDataTodoList(toRequestBody(data.tugas.toString()),
                 toRequestBody(data.detail.toString()),
-                toRequestBody(data.status.toString()))
+                toRequestBody(data.status.toString()),
+                toRequestBody(data.location.toString()),
+                createImageRequestBody(bitmap)
+
+                )
 
         showProgressBar(true)
         client.enqueue(object : Callback<ResponseSuccess> {
@@ -164,7 +179,11 @@ class AddTodoList : Fragment() {
         val client = APIConfig.getApiService()
             .updateDataTodoList(toRequestBody(data.id.toString()),toRequestBody(data.tugas.toString()),
                 toRequestBody(data.detail.toString()),
-                toRequestBody(data.status.toString()))
+                toRequestBody(data.status.toString()),
+                toRequestBody(data.location.toString()),
+                createImageRequestBody(bitmap))
+
+
         showProgressBar(true)
         client.enqueue(object : Callback<ResponseSuccess> {
             override fun onResponse(
@@ -216,6 +235,18 @@ class AddTodoList : Fragment() {
          if(requestCode==1 && resultCode == Activity.RESULT_OK){
              val imageBitmap = data?.extras?.get("data") as Bitmap
              image.setImageBitmap(imageBitmap)
+             bitmap = imageBitmap
          }
+    }
+
+    fun createImageRequestBody(bitmap:Bitmap?):MultipartBody.Part{
+
+        val byteArrayOutputStream = ByteArrayOutputStream()
+        bitmap?.compress(Bitmap.CompressFormat.JPEG,100,byteArrayOutputStream)
+        val imageBytes = byteArrayOutputStream.toByteArray()
+
+        val requestBody = imageBytes.toRequestBody("image/*".toMediaTypeOrNull())
+
+        return MultipartBody.Part.createFormData("image", System.currentTimeMillis().toString()+"image.jpg", requestBody)
     }
 }

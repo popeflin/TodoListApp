@@ -1,7 +1,9 @@
 package com.dewabrata.todolist.apiservice
 
+import android.location.Location
 import com.dewabrata.todolist.apiservice.model.ResponseGetAllData
 import com.dewabrata.todolist.apiservice.model.ResponseSuccess
+import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.Call
 import retrofit2.http.GET
@@ -18,12 +20,12 @@ interface APIServices {
     @Multipart
     @POST("todolist/add")
     fun addDataTodoList(@Part("tugas") tugas:RequestBody ,@Part("detail")
-                         detail:RequestBody,@Part("status") status:RequestBody) : Call<ResponseSuccess>
+                         detail:RequestBody,@Part("status") status:RequestBody,@Part("location")location: RequestBody,@Part image: MultipartBody.Part) : Call<ResponseSuccess>
 
     @Multipart
     @POST("todolist/update")
     fun updateDataTodoList(@Part("id") id:RequestBody, @Part("tugas") tugas:RequestBody ,@Part("detail")
-    detail:RequestBody,@Part("status") status:RequestBody) : Call<ResponseSuccess>
+    detail:RequestBody,@Part("status") status:RequestBody,@Part("location")location: RequestBody,@Part("image")image:  MultipartBody.Part) : Call<ResponseSuccess>
 
     @Multipart
     @POST("todolist/delete")
