@@ -1,6 +1,11 @@
 package com.dewabrata.todolist.uifragment
 
+import android.app.Activity
+import android.content.ActivityNotFoundException
+import android.content.Intent
+import android.graphics.Bitmap
 import android.os.Bundle
+import android.provider.MediaStore
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -8,6 +13,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.Switch
 import com.dewabrata.todolist.R
@@ -39,6 +45,9 @@ class AddTodoList : Fragment() {
     lateinit var txtDetail :EditText
     lateinit var switch : Switch
     lateinit var btnSend : Button
+    lateinit var btnCamera : Button
+    lateinit var image : ImageView
+    lateinit var txtLocation : EditText
 
     lateinit var progressBar: ProgressBar
 
@@ -64,8 +73,15 @@ class AddTodoList : Fragment() {
         txtDetail = view.findViewById(R.id.editDetail)
         switch = view.findViewById((R.id.switch1))
         btnSend = view.findViewById(R.id.btnSend)
+        btnCamera= view.findViewById(R.id.btnCamera)
+        image = view.findViewById(R.id.imageView)
+        txtLocation = view.findViewById(R.id.txtLocation)
 
         progressBar = view.findViewById(R.id.progressBar2)
+
+        btnCamera.setOnClickListener(View.OnClickListener {
+            dispatchTakePictureIntent()
+        })
 
 
         if(param1 == "add"){
@@ -184,5 +200,22 @@ class AddTodoList : Fragment() {
             progressBar.visibility = View.GONE
 
         }
+    }
+
+    fun dispatchTakePictureIntent() {
+        val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+        try {
+           takePictureIntent.resolveActivity(requireActivity().packageManager)
+            startActivityForResult(takePictureIntent, 1)
+        } catch (e: ActivityNotFoundException) {
+            // display error state to the user
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+         if(requestCode==1 && resultCode == Activity.RESULT_OK){
+             val imageBitmap = data?.extras?.get("data") as Bitmap
+             image.setImageBitmap(imageBitmap)
+         }
     }
 }

@@ -21,17 +21,16 @@ data class ResponseGetAllData(
 ) : Parcelable
 
 @Parcelize
-data class Data(
-
-	@field:SerializedName("todolist")
-	val todolist: List<TodolistItem?>? = null
-) : Parcelable
-
-@Parcelize
 data class TodolistItem(
 
 	@field:SerializedName("tugas")
 	val tugas: String? = null,
+
+	@field:SerializedName("image")
+	val image: String? = null,
+
+	@field:SerializedName("location")
+	val location: String? = null,
 
 	@field:SerializedName("id")
 	val id: String? = null,
@@ -41,4 +40,11 @@ data class TodolistItem(
 
 	@field:SerializedName("status")
 	val status: String? = null
+) : Parcelable
+
+@Parcelize
+data class Data(
+
+	@field:SerializedName("todolist")
+	val todolist: List<TodolistItem?>? = null
 ) : Parcelable
