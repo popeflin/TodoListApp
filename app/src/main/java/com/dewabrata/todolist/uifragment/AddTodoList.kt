@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ProgressBar
 import android.widget.Switch
 import com.dewabrata.todolist.R
 import com.dewabrata.todolist.apiservice.APIConfig
@@ -39,6 +40,8 @@ class AddTodoList : Fragment() {
     lateinit var switch : Switch
     lateinit var btnSend : Button
 
+    lateinit var progressBar: ProgressBar
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
@@ -61,6 +64,8 @@ class AddTodoList : Fragment() {
         txtDetail = view.findViewById(R.id.editDetail)
         switch = view.findViewById((R.id.switch1))
         btnSend = view.findViewById(R.id.btnSend)
+
+        progressBar = view.findViewById(R.id.progressBar2)
 
 
         if(param1 == "add"){
@@ -115,6 +120,7 @@ class AddTodoList : Fragment() {
                 toRequestBody(data.detail.toString()),
                 toRequestBody(data.status.toString()))
 
+        showProgressBar(true)
         client.enqueue(object : Callback<ResponseSuccess> {
             override fun onResponse(
                 call: Call<ResponseSuccess>,
@@ -124,13 +130,13 @@ class AddTodoList : Fragment() {
                 val responseBody = response.body()
                 if (response.isSuccessful && responseBody != null) {
                     Log.e("INFO", "onSuccess: ${responseBody.message}")
-
+                    showProgressBar(false)
                     parentFragmentManager.popBackStackImmediate()
                 }
             }
 
             override fun onFailure(call: Call<ResponseSuccess>, t: Throwable) {
-
+                showProgressBar(false)
                 Log.e("INFO", "onFailure: ${t.message.toString()}")
             }
         })
@@ -143,7 +149,7 @@ class AddTodoList : Fragment() {
             .updateDataTodoList(toRequestBody(data.id.toString()),toRequestBody(data.tugas.toString()),
                 toRequestBody(data.detail.toString()),
                 toRequestBody(data.status.toString()))
-
+        showProgressBar(true)
         client.enqueue(object : Callback<ResponseSuccess> {
             override fun onResponse(
                 call: Call<ResponseSuccess>,
@@ -153,12 +159,13 @@ class AddTodoList : Fragment() {
                 val responseBody = response.body()
                 if (response.isSuccessful && responseBody != null) {
                     Log.e("INFO", "onSuccess: ${responseBody.message}")
+                    showProgressBar(false)
                     parentFragmentManager.popBackStackImmediate()
                 }
             }
 
             override fun onFailure(call: Call<ResponseSuccess>, t: Throwable) {
-
+                showProgressBar(false)
                 Log.e("INFO", "onFailure: ${t.message.toString()}")
             }
         })
@@ -167,5 +174,15 @@ class AddTodoList : Fragment() {
     }
     fun toRequestBody(value: String): RequestBody {
         return value.toRequestBody("text/plain".toMediaTypeOrNull())
+    }
+
+    fun showProgressBar(flag:Boolean){
+        if (flag){
+            progressBar.visibility = View.VISIBLE
+            progressBar.animate()
+        }else{
+            progressBar.visibility = View.GONE
+
+        }
     }
 }

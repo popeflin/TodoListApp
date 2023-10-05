@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ProgressBar
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.dewabrata.todolist.R
@@ -42,6 +43,8 @@ class TodoList : Fragment() {
 
     lateinit var fabAddData : FloatingActionButton
 
+    lateinit var progressBar : ProgressBar
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
@@ -61,6 +64,8 @@ class TodoList : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         recyclerView = view.findViewById(R.id.lstTodo)
+        progressBar = view.findViewById(R.id.progressBar)
+
 
         fabAddData = view.findViewById(R.id.fabAdd)
 
@@ -108,6 +113,10 @@ class TodoList : Fragment() {
 
         val client = APIConfig.getApiService().getAllData()
 
+
+        showProgressBar(true)
+
+
         client.enqueue(object : Callback<ResponseGetAllData> {
             override fun onResponse(
                 call: Call<ResponseGetAllData>,
@@ -116,6 +125,7 @@ class TodoList : Fragment() {
 
                 val responseBody = response.body()
                 if (response.isSuccessful && responseBody != null) {
+                    showProgressBar(false)
 
                     todoListAdapter = TodoListAdapter(responseBody.data?.todolist!!, {item ->
 
@@ -138,7 +148,7 @@ class TodoList : Fragment() {
             }
 
             override fun onFailure(call: Call<ResponseGetAllData>, t: Throwable) {
-
+                showProgressBar(false)
                 Log.e("INFO", "onFailure: ${t.message.toString()}")
             }
         })
@@ -148,6 +158,7 @@ class TodoList : Fragment() {
         val client = APIConfig.getApiService()
             .deleteDataTodoList(toRequestBody(data.id.toString()))
 
+        showProgressBar(true)
         client.enqueue(object : Callback<ResponseSuccess> {
             override fun onResponse(
                 call: Call<ResponseSuccess>,
@@ -158,12 +169,13 @@ class TodoList : Fragment() {
                 if (response.isSuccessful && responseBody != null) {
                     Log.e("INFO", "onSuccess: ${responseBody.message}")
 
+                    showProgressBar(false)
                     getAllTodolist()
                 }
             }
 
             override fun onFailure(call: Call<ResponseSuccess>, t: Throwable) {
-
+                showProgressBar(false)
                 Log.e("INFO", "onFailure: ${t.message.toString()}")
             }
         })
@@ -175,5 +187,15 @@ class TodoList : Fragment() {
 
     fun toRequestBody(value: String): RequestBody {
         return value.toRequestBody("text/plain".toMediaTypeOrNull())
+    }
+
+    fun showProgressBar(flag:Boolean){
+        if (flag){
+            progressBar.visibility = View.VISIBLE
+            progressBar.animate()
+        }else{
+            progressBar.visibility = View.GONE
+
+        }
     }
 }

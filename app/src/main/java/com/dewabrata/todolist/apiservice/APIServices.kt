@@ -8,6 +8,7 @@ import retrofit2.http.GET
 import retrofit2.http.Multipart
 import retrofit2.http.POST
 import retrofit2.http.Part
+import retrofit2.http.Query
 
 interface APIServices {
 
@@ -29,6 +30,13 @@ interface APIServices {
     fun deleteDataTodoList(@Part("id") id:RequestBody) : Call<ResponseSuccess>
 
 
+    @GET("todolist/all")
+    fun getAllDataByFilter(@Query("filters[0][co][2][fl]") filterField : String,
+                           @Query("filters[0][co][2][fl]") filterOperator : String,
+                           @Query("filters[0][co][2][fl]") filterValue : String,
+                           @Query("sort_order") sortorder : String
+
+    ) : Call<ResponseGetAllData>
 
 
 }
