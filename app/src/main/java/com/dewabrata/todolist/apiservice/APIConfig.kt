@@ -15,6 +15,7 @@ object APIConfig {
         override fun intercept(chain: Interceptor.Chain): Response {
            val request : Request = chain.request().newBuilder()
                .header("X-Api-Key", "4787FEAB96AC18BD094622469741CC9A")
+               
                .build()
             return chain.proceed(request)
         }
@@ -37,7 +38,7 @@ object APIConfig {
             .build()
 
         val retrofit = Retrofit.Builder()
-            .baseUrl("https://76f6-140-213-140-136.ngrok-free.app/cicool/api/")
+            .baseUrl(" https://1e55-140-213-136-8.ngrok-free.app/cicool/api/")
             .addConverterFactory(GsonConverterFactory.create())
             .client(client)
             .build()

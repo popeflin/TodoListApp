@@ -12,8 +12,12 @@ import com.dewabrata.todolist.R
 import com.dewabrata.todolist.adapter.TodoListAdapter
 import com.dewabrata.todolist.apiservice.APIConfig
 import com.dewabrata.todolist.apiservice.model.ResponseGetAllData
+import com.dewabrata.todolist.apiservice.model.ResponseSuccess
 import com.dewabrata.todolist.apiservice.model.TodolistItem
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -112,15 +116,18 @@ class TodoList : Fragment() {
 
                 val responseBody = response.body()
                 if (response.isSuccessful && responseBody != null) {
-                 //   Log.e("INFO", "onSuccess: ${responseBody.data?.todolist}")
-                    todoListAdapter = TodoListAdapter(responseBody.data?.todolist!!) { todolistItem ->
+
+                    todoListAdapter = TodoListAdapter(responseBody.data?.todolist!!, {item ->
 
                         parentFragmentManager.beginTransaction()
                             .addToBackStack("add form")
-                            .replace(R.id.frmFragmentRoot, AddTodoList.newInstance("update",todolistItem))
+                            .replace(R.id.frmFragmentRoot, AddTodoList.newInstance("update",item))
                             .commit()
+                    } , { item ->
+                        deleteDataTodoList(item)
 
-                     }
+                       })
+
                     recyclerView.layoutManager = LinearLayoutManager(context)
 
                     recyclerView.adapter = todoListAdapter
@@ -135,5 +142,38 @@ class TodoList : Fragment() {
                 Log.e("INFO", "onFailure: ${t.message.toString()}")
             }
         })
+    }
+
+    fun deleteDataTodoList(data : TodolistItem){
+        val client = APIConfig.getApiService()
+            .deleteDataTodoList(toRequestBody(data.id.toString()))
+
+        client.enqueue(object : Callback<ResponseSuccess> {
+            override fun onResponse(
+                call: Call<ResponseSuccess>,
+                response: Response<ResponseSuccess>
+            ) {
+
+                val responseBody = response.body()
+                if (response.isSuccessful && responseBody != null) {
+                    Log.e("INFO", "onSuccess: ${responseBody.message}")
+
+                    getAllTodolist()
+                }
+            }
+
+            override fun onFailure(call: Call<ResponseSuccess>, t: Throwable) {
+
+                Log.e("INFO", "onFailure: ${t.message.toString()}")
+            }
+        })
+
+
+    }
+
+
+
+    fun toRequestBody(value: String): RequestBody {
+        return value.toRequestBody("text/plain".toMediaTypeOrNull())
     }
 }

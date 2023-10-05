@@ -1,5 +1,6 @@
 package com.dewabrata.todolist.adapter
 
+import android.app.AlertDialog
 import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
@@ -10,7 +11,7 @@ import android.widget.TextView
 import com.dewabrata.todolist.R
 import com.dewabrata.todolist.apiservice.model.TodolistItem
 
-class TodoListAdapter (var data : List<TodolistItem?> , private val clickListener: (TodolistItem) -> Unit ) : RecyclerView.Adapter<TodoListAdapter.ViewHolder>() {
+class TodoListAdapter (var data : List<TodolistItem?> , private val clickListener: (TodolistItem) -> Unit,private val onlongclick : (TodolistItem) ->Unit ) : RecyclerView.Adapter<TodoListAdapter.ViewHolder>() {
 
    // lateinit var data : List<TodolistItem?>
     fun setTodo(todo: List<TodolistItem?>?){
@@ -36,6 +37,25 @@ class TodoListAdapter (var data : List<TodolistItem?> , private val clickListene
         holder.itemView.setOnClickListener {
             clickListener(data.get(position)!!)
         }
+
+        holder.itemView.setOnLongClickListener(object : View.OnLongClickListener{
+            override fun onLongClick(v: View?): Boolean {
+               val alertDialog = AlertDialog.Builder(holder.itemView.context)
+                   .setTitle("Hapus Data")
+                   .setMessage("Apakah anda yakin ingin menghapus data ini ?")
+                   .setPositiveButton("Ya"){dialog, which ->
+
+                       onlongclick(data.get(position)!!)
+                   }
+                   .setNegativeButton("Tidak",null)
+                     .create()
+                alertDialog.show()
+
+
+                return true
+            }
+
+        })
 
 
 
